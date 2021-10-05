@@ -1,2 +1,3 @@
 rootProject.name = "Google_Maps_Gorbachev"
 include ':app'
+include ':Maps'
