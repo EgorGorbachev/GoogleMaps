@@ -10,7 +10,8 @@ import com.example.google_maps_gorbachev.databinding.LocItemBinding
 
 
 class PlacesRecyclerAdapter(
-	private var listener: OnItemClick
+	private var listener: OnItemClick,
+	private var longClick: OnItemLongClick
 ) : ListAdapter<Loc, PlacesRecyclerAdapter.MyViewHolder>(LOCATION_COMPARATOR) {
 	
 	inner class MyViewHolder(private var binding: LocItemBinding) :
@@ -25,6 +26,16 @@ class PlacesRecyclerAdapter(
 						listener.onItemClick(item)
 					}
 				}
+			}
+			binding.root.setOnLongClickListener {
+				val position = bindingAdapterPosition
+				if (position != RecyclerView.NO_POSITION) {
+					val item = getItem(position)
+					if (item != null) {
+						longClick.onItemLongClick(item)
+					}
+				}
+				true
 			}
 		}
 		
@@ -62,6 +73,10 @@ class PlacesRecyclerAdapter(
 	interface OnItemClick {
 		fun onItemClick(loc: Loc)
 	}
+	interface OnItemLongClick {
+		fun onItemLongClick(loc: Loc)
+	}
+	
 	
 	companion object {
 		private val LOCATION_COMPARATOR = object : DiffUtil.ItemCallback<Loc>() {

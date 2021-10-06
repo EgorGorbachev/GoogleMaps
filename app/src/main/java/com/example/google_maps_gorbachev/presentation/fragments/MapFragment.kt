@@ -5,7 +5,6 @@ import android.app.Activity
 import android.content.Context
 import android.content.pm.PackageManager
 import android.location.Geocoder
-import android.location.Location
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -18,9 +17,6 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.navigation.Navigation
-import androidx.navigation.fragment.findNavController
-import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.geophoto.presentation.base.BaseFragment
@@ -39,10 +35,8 @@ import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.android.synthetic.main.bottom_sheet.*
 import kotlinx.android.synthetic.main.bottom_sheet.bottomSheet
 import kotlinx.android.synthetic.main.bottom_sheet.view.*
-import kotlinx.android.synthetic.main.bottom_sheet_places_list.*
 import kotlinx.android.synthetic.main.fragment_map.*
 import java.lang.Exception
 import java.util.*
@@ -53,7 +47,7 @@ const val REQUEST_CODE = 101
 
 @AndroidEntryPoint
 class MapFragment : BaseFragment(R.layout.fragment_map), OnMapReadyCallback,
-	PlacesRecyclerAdapter.OnItemClick {
+	PlacesRecyclerAdapter.OnItemClick, PlacesRecyclerAdapter.OnItemLongClick {
 	
 	private val viewModel by viewModels<MapViewModel>()
 	
@@ -70,7 +64,7 @@ class MapFragment : BaseFragment(R.layout.fragment_map), OnMapReadyCallback,
 	private lateinit var bottomSheetView: View
 	
 	//Adapters
-	private var adapter = PlacesRecyclerAdapter(this)
+	private var adapter = PlacesRecyclerAdapter(this, this)
 	
 	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 		super.onViewCreated(view, savedInstanceState)
@@ -140,6 +134,12 @@ class MapFragment : BaseFragment(R.layout.fragment_map), OnMapReadyCallback,
 		moveCamera(mLatLng, 10f)
 		addMarker(mLatLng, loc.locName)
 		bottomSheetDialog.dismiss()
+	}
+	
+	
+	override fun onItemLongClick(loc: Loc) {
+		viewModel.deleteFromDatabase(loc)
+		showPlaces()
 	}
 	
 	override fun onMapReady(p0: GoogleMap) {
