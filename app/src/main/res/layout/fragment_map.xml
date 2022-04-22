@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:map="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools">
-
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:map="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools">
 
         <androidx.fragment.app.FragmentContainerView
             android:id="@+id/map"
@@ -16,7 +15,7 @@
             tools:context=".MainActivity" />
 
         <SearchView
-            android:id="@+id/input_search"
+            android:id="@+id/inputSearch"
             android:focusable="false"
             android:layout_width="match_parent"
             android:layout_height="50dp"
@@ -38,7 +37,7 @@
             android:src="@drawable/ic_baseline_my_location_24"
             app:tint="@color/white"
             map:layout_constraintEnd_toEndOf="parent"
-            map:layout_constraintTop_toBottomOf="@+id/input_search" />
+            map:layout_constraintTop_toBottomOf="@+id/inputSearch" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/showOptionsBtn"
@@ -52,4 +51,3 @@
             map:layout_constraintBottom_toBottomOf="parent"
             map:layout_constraintStart_toStartOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
-</layout>

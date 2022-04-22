@@ -22,6 +22,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.geophoto.presentation.base.BaseFragment
 import com.example.google_maps_gorbachev.Models.Loc
 import com.example.google_maps_gorbachev.R
+import com.example.google_maps_gorbachev.databinding.BottomSheetBinding
+import com.example.google_maps_gorbachev.databinding.FragmentMapBinding
 import com.example.google_maps_gorbachev.presentation.adapters.PlacesRecyclerAdapter
 import com.example.google_maps_gorbachev.viewModels.MapViewModel
 import com.google.android.gms.location.FusedLocationProviderClient
@@ -51,6 +53,14 @@ class MapFragment : BaseFragment(R.layout.fragment_map), OnMapReadyCallback,
 	
 	private val viewModel by viewModels<MapViewModel>()
 	
+	private var _binding: FragmentMapBinding? = null
+	private val binding get() = _binding!!
+	
+	private var _bindingSheet: BottomSheetBinding? = null
+	private val bindingSheet get() = _binding!!
+	
+	
+	
 	//Maps
 	private lateinit var fusedLocationClient: FusedLocationProviderClient
 	private lateinit var googleMap: GoogleMap
@@ -63,13 +73,20 @@ class MapFragment : BaseFragment(R.layout.fragment_map), OnMapReadyCallback,
 	private lateinit var bottomSheetDialog: BottomSheetDialog
 	private lateinit var bottomSheetView: View
 	
+	
 	//Adapters
 	private var adapter = PlacesRecyclerAdapter(this, this)
 	
 	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 		super.onViewCreated(view, savedInstanceState)
 		
+		_binding = FragmentMapBinding.bind(view)
+		
 		getLocationPermission()
+		
+		val inflater = LayoutInflater.from(requireContext())
+		val bindingSheet = BottomSheetBinding.inflate(inflater)
+		bindingSheet.addLocBtn
 		
 		fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireContext())
 		geocoder = Geocoder(requireContext())
@@ -82,13 +99,15 @@ class MapFragment : BaseFragment(R.layout.fragment_map), OnMapReadyCallback,
 			childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment?
 		supportMapFragment!!.getMapAsync(this)
 		
-		currentLocationBtn.setOnClickListener {
+		binding.currentLocationBtn.setOnClickListener {
 			getCurrentLoc()
 			hideKeyboard()
 		}
 		
-		input_search.isIconifiedByDefault = false
-		input_search.clearFocus()
+		
+		
+		binding.inputSearch.isIconifiedByDefault = false
+		binding.inputSearch.clearFocus()
 		
 		
 		val recyclerView: RecyclerView = bottomSheetView.findViewById(R.id.placesRecycler)
@@ -97,7 +116,8 @@ class MapFragment : BaseFragment(R.layout.fragment_map), OnMapReadyCallback,
 		recyclerView.layoutManager = layoutManager
 		showPlaces()
 		
-		showOptionsBtn.setOnClickListener {
+		
+		binding.showOptionsBtn.setOnClickListener {
 			bottomSheetDialog.setContentView(bottomSheetView)
 			bottomSheetDialog.show()
 			
@@ -149,7 +169,7 @@ class MapFragment : BaseFragment(R.layout.fragment_map), OnMapReadyCallback,
 				val onMapClickAddress =
 					viewModel.getAddressLine(LatLng(it.latitude, it.longitude), geocoder)!!
 				addMarker(it, onMapClickAddress)
-				searchViewClearFocus(input_search)
+				searchViewClearFocus(binding.inputSearch)
 				viewModel.currentLoc = it
 			} catch (e: Exception) {
 				Log.e("exception", e.toString())
@@ -186,7 +206,7 @@ class MapFragment : BaseFragment(R.layout.fragment_map), OnMapReadyCallback,
 	}
 	
 	private fun searchLocationViewWatcher() {
-		input_search.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+		binding.inputSearch.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
 			override fun onQueryTextSubmit(loc: String?): Boolean {
 				timer?.cancel()
 				if (loc != null) {
